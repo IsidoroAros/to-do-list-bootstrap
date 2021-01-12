@@ -1,0 +1,54 @@
+body{
+    background-color: rgba(228, 228, 228, 0.192);
+}
+
+.text-area{
+    resize: none;
+    width: 100%;
+    height: 100px;
+}
+
+.date{
+    width: 100%;
+}
+
+.task-creator-form{
+    max-width: 400px;
+    margin: auto;
+}
+
+.task-creator-button-container{
+    max-width: 400px;
+    margin: auto;
+    display: flex;
+    justify-content: space-around;
+}
+
+.task-card{
+    margin: auto;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 20px;
+}
+
+#task-date{
+    font-weight: bolder;
+}
+
+.btn-close{
+    width: 10%;
+    margin-right: -20px;
+}
+
+.clear-all-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#clear-all{
+    max-width: 400px;
+}
