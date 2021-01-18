@@ -92,7 +92,6 @@ function addTask()
     {
         const task = document.createElement('div');
         task.classList.add('task-card', 'border', 'border-info', 'mt-4')
-        task.setAttribute('data-order', totalTasks.length);
         task.innerHTML = `
         <p id="task-info">
         ${taskInfo.task}
@@ -105,50 +104,22 @@ function addTask()
         const injection = document.querySelector('.task-injection');
         injection.appendChild(task);
         totalTasks.push(task.children);
-        // console.log(totalTasks)
         resetearFormulario();
     }else
     {
-        mensajeError('There are empty fields remaining')
+        mensajeError('There are empty fields remaining');
     }
 }
 
 function deleteTask(event)
 {
     const position = event.target.parentNode.getAttribute('data-order');
-    // alert(position)
     totalTasks.splice(position,1);
-    redrawTasks(totalTasks);
+    taskInjection.removeChild(event.target.parentNode);
 }
 
 function clearInjection()
 {
     taskInjection.innerHTML = '';
-}
-
-function redrawTasks(arr)
-{
-    clearInjection();
-    for(let i=0; i<arr.length; i++)
-    {
-        const taskInfo = 
-            {
-                "task" : arr[i].item(0).textContent,
-                "date" : arr[i].item(1).textContent
-            }
-            const task = document.createElement('div');
-            task.classList.add('task-card', 'border', 'border-info', 'mt-4')
-            task.setAttribute('data-order', totalTasks.length);
-            task.innerHTML = `
-            <p id="task-info">
-            ${taskInfo.task}
-            </p>
-            <p id="task-date">
-            ${taskInfo.date}
-            </p>
-            <button type="button" class="btn-close" aria-label="Close" onclick="deleteTask(event)""></button>
-            `
-            const injection = document.querySelector('.task-injection');
-            injection.appendChild(task);
-        }
+    totalTasks = [];
 }
