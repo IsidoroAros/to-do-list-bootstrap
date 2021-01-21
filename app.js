@@ -12,12 +12,16 @@ let totalTasks = [];
 
 //* Event listeners
 
-document.addEventListener('DOMContentLoaded', iniciarApp);
 textArea.addEventListener('blur', validarCampos);
 dateArea.addEventListener('blur', validarCampos);
 resetBtn.addEventListener('click', resetearFormulario);
 saveBtn.addEventListener('click', addTask);
-clearAll.addEventListener('click', clearInjection);
+clearAll.addEventListener('click', resetear);
+document.addEventListener('DOMContentLoaded', ()=> {
+    iniciarApp();
+    totalTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    crearHTML();
+})
 
 //* Funciones
 
@@ -76,6 +80,12 @@ function validarCampos(e)
     }
 }
 
+function sincronizarStorage()
+{
+    localStorage.setItem('tasks', JSON.stringify(totalTasks))
+}
+
+
 function resetearFormulario() 
 {
     form.reset(); //! Metodo que resetea un formulario si es que ya tenemos una referencia a él
@@ -84,42 +94,75 @@ function resetearFormulario()
 
 function addTask()
 {
-    const taskInfo = {
-        "task" : textArea.value,
-        "date": dateArea.value
+    const taskElement = {
+        task: textArea.value,
+        date: dateArea.value,
+        id: Date.now()
     }
-    if(taskInfo.task !== '' && taskInfo.date !== '')
+
+    if(taskElement.task !== '' && taskElement.date !== '')
     {
         const task = document.createElement('div');
         task.classList.add('task-card', 'border', 'border-info', 'mt-4')
         task.innerHTML = `
         <p id="task-info">
-        ${taskInfo.task}
+        ${taskElement.task}
         </p>
         <p id="task-date">
-        ${taskInfo.date}
+        ${taskElement.date}
         </p>
-        <button type="button" class="btn-close" aria-label="Close" onclick="deleteTask(event)""></button>
+        <button type="button" class="btn-close" aria-label="Close" onclick="deleteTask(${taskElement.id})""></button>
         `
-        const injection = document.querySelector('.task-injection');
-        injection.appendChild(task);
-        totalTasks.push(task.children);
+        taskInjection.appendChild(task);
+        totalTasks = [...totalTasks, taskElement];
         resetearFormulario();
+        sincronizarStorage();
     }else
     {
         mensajeError('There are empty fields remaining');
     }
 }
 
-function deleteTask(event)
+
+// Crea el HTML inicial con lo que hay en el local storage
+function crearHTML()
 {
-    const position = event.target.parentNode.getAttribute('data-order');
-    totalTasks.splice(position,1);
-    taskInjection.removeChild(event.target.parentNode);
+    limpiarHTML();
+
+    totalTasks.forEach(taskElement => {
+        const task = document.createElement('div');
+        task.classList.add('task-card', 'border', 'border-info', 'mt-4')
+        task.innerHTML = `
+        <p id="task-info">
+        ${taskElement.task}
+        </p>
+        <p id="task-date">
+        ${taskElement.date}
+        </p>
+        <button type="button" class="btn-close" aria-label="Close" onclick="deleteTask(${taskElement.id})""></button>
+        `
+        taskInjection.appendChild(task);
+    })
+    sincronizarStorage();
 }
 
-function clearInjection()
+function limpiarHTML()
 {
-    taskInjection.innerHTML = '';
-    totalTasks = [];
+    while(taskInjection.firstChild)
+    {
+        taskInjection.removeChild(taskInjection.firstChild)
+    }
+}
+
+function resetear()
+{
+    limpiarHTML();
+    localStorage.removeItem('tasks');
+}
+
+function deleteTask(id)
+{
+    console.log(`recibe el siguiente id: ${id}`)
+    totalTasks = totalTasks.filter( task => task.id !== id);
+    crearHTML();
 }
